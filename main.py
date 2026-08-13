@@ -1,20 +1,30 @@
+from rich.console import Console
+from rich.table import Table
 import datetime
 from expenses import *
 
 def show_expenses(expenses):
-    if len(expenses)>0:
-        for item in expenses:
-            print(f"{item["date"]} | {item["title"]} | {item["category"]} | {item[ "amount"]}")
-        print(f"{calculate_total(expens_list)} ILS")
-    else:
-        print("Empty list")
+
+    table = Table(title="Expenses list")
+    table.add_column("Date",justify="right",style="cyan", no_wrap=True)
+    table.add_column("Title",style="green")
+    table.add_column("Category",style="yellow")
+    table.add_column("Amount",justify="right",style="red")
+
+    for item in expenses:
+        table.add_row(str(item["date"]), item["title"], item["category"], str(item[ "amount"]))
+    console = Console()
+    console.print(table)
+
+    console.print(f"[bold red]Total: {calculate_total(expens_list)} ILS[/bold red]")
+    
 
 def calculate_total(expenses):
     total=0
     
     for item in expenses:
         total+=float(item["amount"])
-    return total
+    return f"{total:.2f}"
 
 def add_expense(expenses,title,category,amount):
     new_item={}
