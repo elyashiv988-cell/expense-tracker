@@ -2,6 +2,7 @@ from rich.console import Console
 from rich.table import Table
 import datetime
 from expenses import *
+import questionary
 
 def show_expenses(expenses):
 
@@ -12,7 +13,7 @@ def show_expenses(expenses):
     table.add_column("Amount",justify="right",style="red")
 
     for item in expenses:
-        table.add_row(str(item["date"]), item["title"], item["category"], str(item[ "amount"]))
+        table.add_row(str(item["date"]), str(item["title"]), str(item["category"]), str(item[ "amount"]))
     console = Console()
     console.print(table)
 
@@ -36,10 +37,10 @@ def add_expense(expenses,title,category,amount):
 
 def ask_for_expense(expenses):
     
-    choose_to_add=input("Would you want to add item to the list expenses? (y/n) ")
-    while choose_to_add=="y" or choose_to_add=="yes":
-        title=input("Enter the title item ")
-        category=input("Enter the category item ")
+    answer=questionary.select("Would you want to add item to the list expenses?",choices=["Yes","No"]).ask()
+    while answer=="Yes":
+        title=questionary.text("Enter the title item").ask()
+        category=questionary.select("Choose the category item",choices=["Food","Travel","Scool","Entertainment","Other"]).ask()
         is_num=False
         while not is_num:
             try:
@@ -48,8 +49,10 @@ def ask_for_expense(expenses):
             except ValueError:
                 print("Amount must be number!")
 
+            answer=questionary.select("Would you want to add item to the list expenses?",choices=["Yes","No"]).ask()
+
         add_expense(expens_list,title,category,amount)
-        choose_to_add=input("Would you want to add item to the list expenses? (y/n) ")
+        
     show_expenses(expens_list)
 
 def main():
